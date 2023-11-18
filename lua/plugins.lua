@@ -217,11 +217,11 @@ return{
               symlink_open = "2",
             },
             git = {
-              unstaged = "U",
+              unstaged = "U", --"★ ",
               staged = "✓",
               unmerged = "U",
               renamed = "➜",
-              untracked = "★ ",
+              untracked = "N ",
               deleted = "D",
               ignored = "◌",
             },
