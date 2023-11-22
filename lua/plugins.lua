@@ -4,6 +4,7 @@ return{
   -- Git related plugins
   'tpope/vim-fugitive',
   'tpope/vim-rhubarb', -- Detect tabstop and shiftwidth automatically 'tpope/vim-sleuth',
+-- lazy.nvim
   {
     -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
@@ -142,21 +143,6 @@ return{
         require'alpha'.setup(require'alpha.themes.startify'.config)
     end
   };
-  --{
-  --  "nvim-tree/nvim-tree.lua",
-  --  version = "*",
-  --  lazy = false,
-  --  dependencies = {
-  --    "nvim-tree/nvim-web-devicons",
-  --  },
-  --  config = function()
-  --    -- require("nvim-tree").setup {}
-
-
-
-
-  --  end,
-  --},
 
  {
   "nvim-tree/nvim-tree.lua",
