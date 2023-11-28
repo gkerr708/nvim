@@ -17,7 +17,7 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup('plugins')
---require('plugin_config')
+require('plugin_config')
 
 -- Setup for LATEX
 vim.g.vimtex_view_method = 'zathura'
@@ -31,7 +31,10 @@ vim.g.vimtex_compiler_method = 'latexmk' --'generic' --'latexrun'
 vim.cmd[[autocmd FileType tex setlocal wrap]]
 vim.cmd[[autocmd FileType txt setlocal wrap]] -- this one no work :(((
 
+-- Imports all of the settings
 require("settings")
+
+
 
 
 -- [[ Highlight on yank ]]

@@ -4,6 +4,10 @@ return{
   -- Git related plugins
   'tpope/vim-fugitive',
   'tpope/vim-rhubarb', -- Detect tabstop and shiftwidth automatically 'tpope/vim-sleuth',
+
+  --web dev icons
+  'nvim-tree/nvim-web-devicons',
+
 -- lazy.nvim
   {
     -- LSP Configuration & Plugins
@@ -149,6 +153,9 @@ return{
   dependencies = { "nvim-tree/nvim-web-devicons" },
   config = function()
     local nvimtree = require("nvim-tree")
+    require'nvim-web-devicons'.setup {
+      default = true;
+    }
 
     -- recommended settings from nvim-tree documentation
     vim.g.loaded_netrw = 1
