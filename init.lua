@@ -26,11 +26,13 @@ vim.g.vimtex_view_general_options = "--unique file:@pdf\\#src:@line@tex"
 vim.cmd('let g:vimtex_view_general_options = "--unique file:@pdf\\#src:@line@tex"')
 vim.g.vimtex_compiler_method = 'latexmk' --'generic' --'latexrun'
 
+
 -- Enable text wrapping for .tex files
 vim.cmd[[autocmd FileType tex setlocal wrap]]
 vim.cmd[[autocmd FileType txt setlocal wrap]] -- this one no work :(((
 
 require("settings")
+
 
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`

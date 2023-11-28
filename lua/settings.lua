@@ -21,3 +21,9 @@ vim.o.scrolloff = 8
 vim.o.spelllang = 'en_us'
 vim.o.spell = true
 vim.g.netrw_liststyle = 0
+
+
+
+
+vim.g.WebDevIconsNerdTreeAfterGlyphPadding = '  '
+

@@ -164,8 +164,8 @@ return{
         icons = {
           web_devicons = {
             file = {
-              enable = false,
-              color = false,
+              enable = true,
+              color = true,
             },
             folder = {
               enable = false,
@@ -179,7 +179,7 @@ return{
           padding = " ",
           symlink_arrow = " ➛ ",
           show = {
-            file = false,
+            file = true,
             folder = false,
             folder_arrow = true,
             git = true,
@@ -187,9 +187,16 @@ return{
             diagnostics = true,
             bookmarks = true,
           },
+          --      ✗  unstaged
+          --      ✓  staged
+          --        unmerged
+          --      ➜  renamed
+          --      ★  untracked
+          --         deleted
+          --      ◌  ignored
           glyphs = {
-            default = "-",
-            symlink = "3",
+            default = " ",
+            symlink = "3 ",
             bookmark = "4",
             modified = "●",
             folder = {
@@ -354,3 +361,4 @@ return{
   end,
 	}
 }
+
