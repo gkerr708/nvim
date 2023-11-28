@@ -13,4 +13,6 @@ vim.keymap.set('n', '<Leader>ga', ':! git add .<CR>') -- opens nerdtree file exp
 vim.keymap.set('n', '<Leader>gc', ':! git commit -m "Laptop"<CR>') -- opens nerdtree file explorer
 vim.keymap.set('n', '<Leader>gp', ':! git push<CR>') -- opens nerdtree file explorer
 vim.keymap.set('n', '<Leader>gP', ':! git pull<CR>') -- opens nerdtree file explorer
+vim.keymap.set('n', '<Leader>gf', ':! git fetch<CR>') -- opens nerdtree file explorer
+vim.keymap.set('n', '<Leader>gm', ':! git merge<CR>') -- opens nerdtree file explorer
 --
