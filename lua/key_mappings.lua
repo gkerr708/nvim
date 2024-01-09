@@ -10,7 +10,7 @@ vim.keymap.set('n', '<Leader>j', ':NvimTreeToggle<CR>') -- opens nerdtree file e
 vim.keymap.set('n', '<Leader>wc', ':w !wc -w<CR>') -- opens nerdtree file explorer
 -- Git commands
 vim.keymap.set('n', '<Leader>ga', ':! git add .<CR>') -- opens nerdtree file explorer
-vim.keymap.set('n', '<Leader>gc', ':! git commit -m "Laptop"<CR>') -- opens nerdtree file explorer
+vim.keymap.set('n', '<Leader>gc', ':! git commit -m "Default Message"<CR>') -- opens nerdtree file explorer
 vim.keymap.set('n', '<Leader>gp', ':! git push<CR>') -- opens nerdtree file explorer
 vim.keymap.set('n', '<Leader>gP', ':! git pull<CR>') -- opens nerdtree file explorer
 vim.keymap.set('n', '<Leader>gf', ':! git fetch<CR>') -- opens nerdtree file explorer
