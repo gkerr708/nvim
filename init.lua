@@ -1,5 +1,13 @@
--- Dis the global init.lua file
---
+
+if vim.g.vscode then
+
+require("settings")
+require("key_mappings")
+
+
+else
+
+
 require("key_mappings")
 -- Installs the Lazy.nvim package manager
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -297,5 +305,4 @@ cmp.setup {
   },
 }
 
--- The line beneath this is called `modeline`. See `:help modeline`
--- vim: ts=2 sts=2 sw=2 et
+end
