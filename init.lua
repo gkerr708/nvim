@@ -34,13 +34,55 @@ vim.g.vimtex_view_general_options = "--unique file:@pdf\\#src:@line@tex"
 vim.cmd('let g:vimtex_view_general_options = "--unique file:@pdf\\#src:@line@tex"')
 vim.g.vimtex_compiler_method = 'latexmk' --'generic' --'latexrun'
 
+-- GPT told me to use this to stop the bashrc error
+vim.api.nvim_exec([[
+  autocmd FileType sh, bash setlocal nofoldenable
+]], false)
 
 -- Enable text wrapping for .tex files
 vim.cmd[[autocmd FileType tex setlocal wrap]]
-vim.cmd[[autocmd FileType txt setlocal wrap]] -- this one no work :(((
+vim.cmd[[autocmd FileType tex setlocal noautoindent]] -- Stops auto indent for .tex files
 
 -- Imports all of the settings
 require("settings")
+
+-- Required libraries
+local http = require('socket.http')
+
+-- Function to fetch Python documentation
+local function fetch_python_documentation()
+    local url = "https://docs.python.org/3/library/index.html" -- URL of Python documentation
+    local response_body = {}
+    local _, status_code, _ = http.request{
+        url = url,
+        sink = ltn12.sink.table(response_body)
+    }
+
+    -- Check if the request was successful
+    if status_code == 200 then
+        -- Convert response_body table to a string
+        local documentation = table.concat(response_body, "\n")
+        return documentation
+    else
+        return "Failed to fetch Python documentation."
+    end
+end
+
+-- Function to display documentation in a new split window
+local function display_documentation(content)
+    vim.cmd('vsp') -- Create a new vertical split
+    vim.cmd('wincmd l') -- Move to the new split
+    local buf = vim.api.nvim_create_buf(false, true) -- Create a new buffer
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, vim.split(content, '\n')) -- Set buffer content
+    vim.api.nvim_buf_set_option(buf, 'filetype', 'html') -- Set buffer filetype to HTML for Python docs
+    vim.api.nvim_buf_set_option(buf, 'modifiable', false) -- Make buffer read-only
+end
+
+-- Define a command to trigger documentation display
+vim.cmd('command! PythonDoc lua display_documentation(fetch_python_documentation())')
+
+
+
 
 
 
@@ -68,7 +110,15 @@ require('telescope').setup {
     },
   },
 }
-
+-- Python Linting
+require('lspconfig').ruff_lsp.setup {
+  init_options = {
+    settings = {
+      -- Any extra CLI arguments for `ruff` go here.
+      args = {},
+    }
+  }
+}
 -- Enable telescope fzf native, if installed
 pcall(require('telescope').load_extension, 'fzf')
 

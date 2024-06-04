@@ -1,6 +1,10 @@
 return{
+
   -- LaTeX
   'lervag/vimtex',
+
+  'github/copilot.vim',
+
   -- Git related plugins
   'tpope/vim-fugitive',
   'tpope/vim-rhubarb', -- Detect tabstop and shiftwidth automatically 'tpope/vim-sleuth',
@@ -37,11 +41,14 @@ return{
       'hrsh7th/cmp-nvim-lsp',
 
       -- Adds a number of user-friendly snippets
-      'rafamadriz/friendly-snippets',
+      --'rafamadriz/friendly-snippets',
     },
   },
   -- Useful plugin to show you pending keybinds.
   { 'folke/which-key.nvim', opts = {} },
+  {
+    -- Python Linting 
+  },
   {
     -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
