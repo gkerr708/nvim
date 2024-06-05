@@ -2,7 +2,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- runs python files
-vim.keymap.set('n', '<Leader>rm', ':! python3 %<CR>') -- % means current file
+vim.keymap.set('n', '<Leader>rm', ':! python3.10 %<CR>') -- % means current file
 
 -- complies cpp files
 vim.keymap.set('n', '<Leader>ro', ':!cmake -S . -B build && cmake --build build <CR>')

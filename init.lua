@@ -47,7 +47,7 @@ vim.cmd[[autocmd FileType tex setlocal noautoindent]] -- Stops auto indent for .
 require("settings")
 
 -- Required libraries
-local http = require('socket.http')
+-- local http = require('socket.http')
 
 -- Function to fetch Python documentation
 local function fetch_python_documentation()
