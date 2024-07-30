@@ -4,7 +4,6 @@ if vim.g.vscode then
 require("settings")
 require("key_mappings")
 
-
 else
 
 
@@ -28,11 +27,12 @@ require('lazy').setup('plugins')
 require('plugin_config')
 
 -- Setup for LATEX
+	-- Might need to change this for the lab PC 
 vim.g.vimtex_view_method = 'zathura'
 vim.g.vimtex_view_general_viewer = 'okular'
 vim.g.vimtex_view_general_options = "--unique file:@pdf\\#src:@line@tex"
 vim.cmd('let g:vimtex_view_general_options = "--unique file:@pdf\\#src:@line@tex"')
-vim.g.vimtex_compiler_method = 'latexmk' --'generic' --'latexrun'
+vim.g.vimtex_compiler_method = 'latexmk'  --'latexrun' --latexmk works on laptop
 
 -- GPT told me to use this to stop the bashrc error
 vim.api.nvim_exec([[
@@ -47,7 +47,7 @@ vim.cmd[[autocmd FileType tex setlocal noautoindent]] -- Stops auto indent for .
 require("settings")
 
 -- Required libraries
-local http = require('socket.http')
+-- local http = require('socket.http')
 
 -- Function to fetch Python documentation
 local function fetch_python_documentation()
@@ -80,10 +80,6 @@ end
 
 -- Define a command to trigger documentation display
 vim.cmd('command! PythonDoc lua display_documentation(fetch_python_documentation())')
-
-
-
-
 
 
 
