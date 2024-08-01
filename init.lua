@@ -34,39 +34,12 @@ vim.g.vimtex_view_general_options = "--unique file:@pdf\\#src:@line@tex"
 vim.cmd('let g:vimtex_view_general_options = "--unique file:@pdf\\#src:@line@tex"')
 vim.g.vimtex_compiler_method = 'latexmk'  --'latexrun' --latexmk works on laptop
 
--- GPT told me to use this to stop the bashrc error
--- vim.api.nvim_exec([[
---   autocmd FileType sh, bash setlocal nofoldenable
--- ]], false)
-
 -- Enable text wrapping for .tex files
 vim.cmd[[autocmd FileType tex setlocal wrap]]
 vim.cmd[[autocmd FileType tex setlocal noautoindent]] -- Stops auto indent for .tex files
 
 -- Imports all of the settings
 require("settings")
-
--- Required libraries
--- local http = require('socket.http')
-
--- Function to fetch Python documentation
-local function fetch_python_documentation()
-    local url = "https://docs.python.org/3/library/index.html" -- URL of Python documentation
-    local response_body = {}
-    local _, status_code, _ = http.request{
-        url = url,
-        sink = ltn12.sink.table(response_body)
-    }
-
-    -- Check if the request was successful
-    if status_code == 200 then
-        -- Convert response_body table to a string
-        local documentation = table.concat(response_body, "\n")
-        return documentation
-    else
-        return "Failed to fetch Python documentation."
-    end
-end
 
 -- Function to display documentation in a new split window
 local function display_documentation(content)
@@ -77,11 +50,6 @@ local function display_documentation(content)
     vim.api.nvim_buf_set_option(buf, 'filetype', 'html') -- Set buffer filetype to HTML for Python docs
     vim.api.nvim_buf_set_option(buf, 'modifiable', false) -- Make buffer read-only
 end
-
--- Define a command to trigger documentation display
-vim.cmd('command! PythonDoc lua display_documentation(fetch_python_documentation())')
-
-
 
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
@@ -94,29 +62,6 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   pattern = '*',
 })
 
--- [[ Configure Telescope ]]
--- See `:help telescope` and `:help telescope.setup()`
-require('telescope').setup {
-  defaults = {
-    mappings = {
-      i = {
-        ['<C-u>'] = false,
-        ['<C-d>'] = false,
-      },
-    },
-  },
-}
--- Python Linting
-require('lspconfig').ruff_lsp.setup {
-  init_options = {
-    settings = {
-      -- Any extra CLI arguments for `ruff` go here.
-      args = {},
-    }
-  }
-}
--- Enable telescope fzf native, if installed
-pcall(require('telescope').load_extension, 'fzf')
 
 -- See `:help telescope.builtin`
 vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
