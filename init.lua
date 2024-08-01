@@ -35,9 +35,9 @@ vim.cmd('let g:vimtex_view_general_options = "--unique file:@pdf\\#src:@line@tex
 vim.g.vimtex_compiler_method = 'latexmk'  --'latexrun' --latexmk works on laptop
 
 -- GPT told me to use this to stop the bashrc error
-vim.api.nvim_exec([[
-  autocmd FileType sh, bash setlocal nofoldenable
-]], false)
+-- vim.api.nvim_exec([[
+--   autocmd FileType sh, bash setlocal nofoldenable
+-- ]], false)
 
 -- Enable text wrapping for .tex files
 vim.cmd[[autocmd FileType tex setlocal wrap]]
