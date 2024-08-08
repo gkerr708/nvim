@@ -23,9 +23,14 @@ vim.o.spell = true
 vim.g.netrw_liststyle = 0
 vim.o.hlsearch = true
 vim.o.incsearch = true
+vim.o.background = "dark" -- or "light" for light mode
+--vim.cmd([[colorscheme gruvbox]])
 
+-- Ensure the signcolumn is always visible
+vim.wo.signcolumn = 'yes'
 
-
+-- Set the highlight group for SignColumn
+vim.cmd [[highlight SignColumn guibg=bg]]
 
 vim.g.WebDevIconsNerdTreeAfterGlyphPadding = '  '
 
