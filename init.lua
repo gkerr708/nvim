@@ -41,16 +41,6 @@ vim.cmd[[autocmd FileType tex setlocal noautoindent]] -- Stops auto indent for .
 -- Imports all of the settings
 require("settings")
 
--- Function to display documentation in a new split window
-local function display_documentation(content)
-    vim.cmd('vsp') -- Create a new vertical split
-    vim.cmd('wincmd l') -- Move to the new split
-    local buf = vim.api.nvim_create_buf(false, true) -- Create a new buffer
-    vim.api.nvim_buf_set_lines(buf, 0, -1, false, vim.split(content, '\n')) -- Set buffer content
-    vim.api.nvim_buf_set_option(buf, 'filetype', 'html') -- Set buffer filetype to HTML for Python docs
-    vim.api.nvim_buf_set_option(buf, 'modifiable', false) -- Make buffer read-only
-end
-
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
 local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
