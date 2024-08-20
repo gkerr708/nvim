@@ -34,9 +34,6 @@ vim.g.vimtex_view_general_options = "--unique file:@pdf\\#src:@line@tex"
 vim.cmd('let g:vimtex_view_general_options = "--unique file:@pdf\\#src:@line@tex"')
 vim.g.vimtex_compiler_method = 'latexmk'  --'latexrun' --latexmk works on laptop
 
--- Enable text wrapping for .tex files
-vim.cmd[[autocmd FileType tex setlocal wrap]]
-vim.cmd[[autocmd FileType tex setlocal noautoindent]] -- Stops auto indent for .tex files
 
 -- Imports all of the settings
 require("settings")

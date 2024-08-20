@@ -32,5 +32,13 @@ vim.wo.signcolumn = 'yes'
 -- Set the highlight group for SignColumn
 vim.cmd [[highlight SignColumn guibg=bg]]
 
+-- Enable text wrapping for .tex files
+vim.cmd[[autocmd FileType tex,markdown setlocal wrap]]
+vim.cmd[[autocmd FileType tex setlocal noautoindent]] -- Stops auto indent for .tex files
+
+
+-- Enable text wrapping for .tex and .md files
+
+
 vim.g.WebDevIconsNerdTreeAfterGlyphPadding = '  '
 
