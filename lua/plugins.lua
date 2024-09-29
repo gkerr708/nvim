@@ -79,30 +79,31 @@ return{
       end,
     },
   },
-  {
-    'sainnhe/everforest',
-    lazy = false,
-    priority = 1000,
-    config = function()
-      -- Optionally configure and load the colorscheme
-      -- directly inside the plugin declaration.
-      vim.g.everforest_enable_italic = true
-      vim.cmd.colorscheme('everforest')
-    end
-  },
+  -- Themes (remember to set the 
+  --{
+  --  'sainnhe/everforest',
+  --  lazy = false,
+  --  priority = 1000,
+  --  config = function()
+  --    -- Optionally configure and load the colorscheme
+  --    -- directly inside the plugin declaration.
+  --    vim.g.everforest_enable_italic = true
+  --    vim.cmd.colorscheme('everforest')
+  --  end
+  --},
   --{
   --  "ellisonleao/gruvbox.nvim",
   --  	priority = 1000 ,
   --  	config = true, opts = ...
   --},
-  --{
-  --  -- Theme inspired by Atom
-  --  'navarasu/onedark.nvim',
-  --  priority = 1000,
-  --  config = function()
-  --    vim.cmd.colorscheme 'onedark'
-  --  end,
-  --},
+  {
+    -- Theme inspired by Atom
+    'navarasu/onedark.nvim',
+    priority = 1000,
+    config = function()
+      vim.cmd.colorscheme 'onedark'
+    end,
+  },
   {
     -- Set lualine as statusline
     'nvim-lualine/lualine.nvim',
@@ -110,7 +111,7 @@ return{
     opts = {
       options = {
         icons_enabled = false,
-        theme = 'everforest',--'gruvbox','onedark',
+        theme = 'onedark',--'gruvbox','onedark', 'everforest'
         component_separators = '|',
         section_separators = '',
       },

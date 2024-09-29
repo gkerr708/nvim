@@ -7,7 +7,6 @@ vim.wo.relativenumber = true
 vim.wo.wrap = false    -- Disable text wrapping
 vim.o.mouse = 'a'
 vim.opt.clipboard = 'unnamedplus' -- not sure which one is correct
---vim.o.clipboard = 'unnamedplus'
 vim.o.breakindent = true
 vim.o.undofile = true
 vim.o.ignorecase = true
