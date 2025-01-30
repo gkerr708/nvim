@@ -27,13 +27,22 @@ require('lazy').setup('plugins')
 require('plugin_config')
 
 -- Setup for LATEX
-	-- Might need to change this for the lab PC 
-vim.g.vimtex_view_method = 'zathura'
-vim.g.vimtex_view_general_viewer = 'okular'
-vim.g.vimtex_view_general_options = "--unique file:@pdf\\#src:@line@tex"
-vim.cmd('let g:vimtex_view_general_options = "--unique file:@pdf\\#src:@line@tex"')
-vim.g.vimtex_compiler_method = 'latexmk'  --'latexrun' --latexmk works on laptop
+-- PDF Viewer Settings
+vim.g.vimtex_view_method = 'zathura' -- Use Zathura as the default PDF viewer
+vim.g.vimtex_view_general_viewer = 'okular' -- Fallback to Okular if Zathura isn't available
+vim.g.vimtex_view_general_options = '--unique file:@pdf\\#src:@line@tex'
 
+-- Compiler Settings
+vim.g.vimtex_compiler_method = 'latexmk' -- Use latexmk for automatic compilation
+vim.g.vimtex_compiler_latexmk = {
+  options = {
+    '-shell-escape',       -- Allow shell escape (e.g., for minted)
+    '-verbose',            -- Output detailed logs
+    '-file-line-error',    -- Include line numbers in error messages
+    '-synctex=1',          -- Enable SyncTeX for forward/backward search
+    '-interaction=nonstopmode', -- Nonstop mode for uninterrupted compilation
+  },
+}
 
 -- Imports all of the settings
 require("settings")
