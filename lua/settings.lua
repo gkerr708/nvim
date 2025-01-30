@@ -24,6 +24,12 @@ vim.o.hlsearch = true
 vim.o.incsearch = true
 vim.o.background = "dark" -- or "light" for light mode
 --vim.cmd([[colorscheme gruvbox]])
+--
+-- Command just for json to change the tabstop
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "json",
+  command = "setlocal tabstop=2 shiftwidth=2 expandtab"
+})
 
 -- Ensure the signcolumn is always visible
 vim.wo.signcolumn = 'yes'
