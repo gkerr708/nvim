@@ -11,30 +11,21 @@ vim.keymap.set('n', '<Leader>rm', function()
   local poetry_env = handle and handle:read("*a") or ""
   if handle then handle:close() end
 
-  local cmd = poetry_env ~= "" and "poetry run python3.10 %" or "python3.10 %"
+  local using_poetry = poetry_env ~= ""
+  local filename = vim.fn.shellescape(vim.fn.expand("%:p"))  -- Get and escape file path
+  local cmd = using_poetry and "poetry run python3.10 " .. filename
+                          or "python3.10 " .. filename
+  local msg = using_poetry and "echo 'Python 3.10 (Poetry)' && echo ''"
+                          or "echo 'Python 3.10 (System)' && echo ''"
 
-  -- Open terminal in a bottom split
-  vim.cmd("belowright split | terminal " .. cmd)
-
-  -- Exit insert mode immediately after opening terminal
-  vim.cmd("stopinsert")
-end, { silent = false })
-
-
--- Runs Python files with poetry or without (vertical side split)
-vim.keymap.set('n', '<Leader>rn', function()
-  local handle = io.popen("poetry env info --path 2>/dev/null")
-  local poetry_env = handle and handle:read("*a") or ""
-  if handle then handle:close() end
-
-  local cmd = poetry_env ~= "" and "poetry run python3.10 %" or "python3.10 %"
-
-  -- Open terminal in a vertical split
-  vim.cmd("vsplit | terminal " .. cmd)
+  -- Open terminal and run both the message + Python command
+  vim.cmd("belowright split | terminal " .. msg .. " && " .. cmd)
 
   -- Exit insert mode immediately after opening terminal
   vim.cmd("stopinsert")
 end, { silent = false })
+
+
 
 -- complies cpp files
 --vim.keymap.set('n', '<Leader>ro', ':!cmake -S . -B build && cmake --build build <CR>')
