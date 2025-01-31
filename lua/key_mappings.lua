@@ -2,8 +2,29 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- runs python files
-vim.keymap.set('n', '<Leader>rm', ':! python3.10 %<CR>') -- % means current file
-vim.keymap.set('n', '<Leader>rp', ':! poetry run python3.10 %<CR>') -- % means current file
+--vim.keymap.set('n', '<Leader>rm', ':! python3.10 %<CR>') -- % means current file
+--vim.keymap.set('n', '<Leader>rp', ':! poetry run python3.10 %<CR>') -- % means current file
+
+-- Runs python files with poetry or without
+vim.keymap.set('n', '<Leader>rm', function()
+  local handle = io.popen("poetry env info --path 2>/dev/null")
+  local poetry_env = handle and handle:read("*a") or ""
+  if handle then handle:close() end
+
+  local cmd = poetry_env ~= "" and "poetry run python3.10 %" or "python3.10 %"
+
+  -- Open terminal in a horizontal split
+  vim.cmd("split | terminal " .. cmd)
+
+  -- Exit insert mode immediately after opening terminal
+  vim.cmd("stopinsert")
+
+  -- Auto-close buffer when terminal process exits
+  vim.api.nvim_create_autocmd("TermClose", {
+    pattern = "term://*",
+    command = "bd!"
+  })
+end, { silent = false })
 
 -- complies cpp files
 --vim.keymap.set('n', '<Leader>ro', ':!cmake -S . -B build && cmake --build build <CR>')
@@ -38,6 +59,17 @@ vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = tr
 vim.keymap.set('n', '<Leader><Tab>', '<C-w>w')
 vim.keymap.set('n', '<Leader>j', ':NvimTreeToggle<CR>') -- opens nerdtree file explorer
 vim.keymap.set('n', '<Leader>wc', ':w !wc -w<CR>') -- gets word count
+
+-- quit window
+-- vim.keymap.set('n', '<Leader>rq', ':q <CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<Leader>q', function()
+  local buftype = vim.bo.buftype
+  if buftype == "terminal" then
+    vim.cmd("close")  -- Close terminal window
+  else
+    vim.cmd("q")  -- Quit normal buffer
+  end
+end, { noremap = true, silent = true })
 
 -- Git commands
 vim.keymap.set('n', '<Leader>ga', ':! git add .<CR>') -- opens nerdtree file explorer
