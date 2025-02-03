@@ -49,6 +49,12 @@ return{
   {
     -- Python Linting 
   },
+
+  {
+	  "iamcco/markdown-preview.nvim",
+	  build = "cd app && npm install",
+	  ft = "markdown"
+  },
   {
     -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',

@@ -27,6 +27,7 @@ end, { silent = false })
 
 
 
+
 -- complies cpp files
 --vim.keymap.set('n', '<Leader>ro', ':!cmake -S . -B build && cmake --build build <CR>')
 --vim.keymap.set('n', '<Leader>rp', ':!./build/%:t:r  <CR>')
@@ -63,6 +64,11 @@ vim.keymap.set('n', '<Leader>wc', ':w !wc -w<CR>') -- gets word count
 
 -- quit window
 vim.keymap.set('n', '<Leader>q', ':q <CR>', { noremap = true, silent = false })
+
+-- Markdown files 
+vim.keymap.set('n', '<Leader>mp', ':MarkdownPreview<CR>') -- % means current file
+vim.keymap.set('n', '<Leader>ms', ':MarkdownPreviewStop<CR>') -- % means current file
+vim.keymap.set('n', '<Leader>mt', ':MarkdownPreviewToggle<CR>') -- % means current file
 
 -- Git commands
 vim.keymap.set('n', '<Leader>ga', ':! git add .<CR>') -- opens nerdtree file explorer
