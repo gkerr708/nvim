@@ -6,7 +6,8 @@ vim = vim or {}
 vim.keymap.set('n', '<Leader>rp', function()
   local python_cmd = paths.get_python_path()
   local filename = vim.fn.shellescape(paths.get_current_file_path())
-  local project_root = paths.get_git_root() or vim.fn.getcwd()
+  local project_root = vim.fn.getcwd()
+
   local cmd = "cd " .. vim.fn.shellescape(project_root) .. " && PYTHONPATH=. " .. python_cmd .. " " .. filename
   vim.cmd("belowright split | terminal echo '" .. python_cmd .. " " .. filename .. "' && echo '' && " .. cmd)
   vim.cmd("stopinsert")
@@ -14,7 +15,7 @@ end, { silent = false })
 
 vim.keymap.set('n', '<Leader>rm', function()
   --local filename = paths.get_current_file_path()
-  local project_root = paths.get_git_root() or vim.fn.getcwd()
+  local project_root = vim.fn.getcwd()
   local module_name = paths.get_module_name()
 
   local python_cmd
@@ -54,7 +55,7 @@ end, { silent = false })
 
 -- C/C++
 vim.keymap.set('n', '<Leader>cp', function()
-  local project_root = paths.get_git_root() or vim.fn.getcwd()
+  local project_root = vim.fn.getcwd()
   local build_dir = project_root .. "/build"
   if vim.fn.isdirectory(build_dir) == 0 then
     vim.fn.mkdir(build_dir, "p")
@@ -67,7 +68,7 @@ vim.keymap.set('n', '<Leader>cp', function()
 end, { silent = false })
 
 vim.keymap.set('n', '<Leader>cc', function()
-  local project_root = paths.get_git_root() or vim.fn.getcwd()
+  local project_root = vim.fn.getcwd()
   local build_dir = project_root .. "/build/Release"
   if vim.fn.isdirectory(build_dir) == 0 then
     vim.fn.mkdir(build_dir, "p")
