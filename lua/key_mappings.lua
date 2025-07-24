@@ -132,6 +132,9 @@ vim.keymap.set('n', '<Leader>mp', ':MarkdownPreview<CR>') -- % means current fil
 vim.keymap.set('n', '<Leader>ms', ':MarkdownPreviewStop<CR>') -- % means current file
 vim.keymap.set('n', '<Leader>mt', ':MarkdownPreviewToggle<CR>') -- % means current file
 
+-- Show diagnostics
+vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = "Show diagnostics" })
+
 -- Git commands
 vim.keymap.set('n', '<Leader>ga', ':! git add .<CR>') -- opens nerdtree file explorer
 vim.keymap.set('n', '<Leader>gc', ':! git commit -m "Default Message"<CR>') -- opens nerdtree file explorer
