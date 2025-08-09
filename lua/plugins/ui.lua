@@ -30,6 +30,12 @@ return{
       vim.cmd([[ highlight NvimTreeFolderArrowClosed guifg=#3FC5FF ]])
       vim.cmd([[ highlight NvimTreeFolderArrowOpen guifg=#3FC5FF ]])
       nvimtree.setup({
+		git = {
+		  enable = true,
+		  ignore = false,
+		  show_on_dirs = true,
+		  timeout = 500,
+		},
         sort = {
           sorter = "case_sensitive",
         },
@@ -57,9 +63,10 @@ return{
             },
           },
         },
-        filters = {
-          dotfiles = false,
-        },
+		filters = {
+  		  dotfiles = false,    -- show dotfiles
+  		  git_ignored = false, -- show git-ignored files
+  		},
       })
     end,
   },
