@@ -45,6 +45,14 @@ vim.api.nvim_create_autocmd("FileType", {
 -- Ensure the signcolumn is always visible
 vim.wo.signcolumn = 'yes'
 
+-- highlight on yank
+vim.api.nvim_create_autocmd("TextYankPost", {
+  pattern = "*",
+  callback = function()
+	vim.highlight.on_yank({ timeout = 200 })
+  end,
+})
+
 -- Set the highlight group for SignColumn
 vim.cmd [[highlight SignColumn guibg=bg]]
 
