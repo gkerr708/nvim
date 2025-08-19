@@ -1,6 +1,28 @@
 -- lua/util/paths.lua
 local M = {}
 
+-- Return project root (cwd), python-source (default "src"), and package name
+-- Not working yet
+function M.pyproj_info()
+  local root = vim.fn.getcwd()
+  local pyproj = root .. "/pyproject.toml"
+  local pkg_name, py_src = nil, "src"
+
+  if vim.fn.filereadable(pyproj) == 1 then
+    for _, line in ipairs(vim.fn.readfile(pyproj)) do
+      if not pkg_name then
+        local n = line:match('^%s*name%s*=%s*"(.-)"')
+        if n then pkg_name = n:gsub("%-", "_") end
+      end
+      if line:find("^%s*python%-source%s*=") then
+        local s = line:match('^%s*python%-source%s*=%s*"(.-)"')
+        if s and #s > 0 then py_src = s end
+      end
+    end
+  end
+  return root, py_src, pkg_name
+end
+
 -- Get the Python interpreter path based on the current project setup
 function M.get_python_path()
   local cwd = vim.fn.getcwd()
