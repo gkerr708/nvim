@@ -1,9 +1,6 @@
 -- init.lua
-vim = vim or {} 
-
 vim.g.mapleader = ' '
-vim.g.maplocalleader = '\\'
-
+vim.g.maplocalleader = ','
 
 -- LSP compat shim for plugins still calling vim.lsp.buf_get_clients()
 --@diagnostic disable-next-line: duplicate-set-field

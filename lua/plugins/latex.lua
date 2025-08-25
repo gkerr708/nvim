@@ -5,7 +5,7 @@ return {
     lazy = false, -- load at startup (recommended for filetype detection)
     init = function()
       -- Set localleader BEFORE plugin loads (VimTeX maps use it)
-      vim.g.maplocalleader = " "
+      --vim.g.maplocalleader = " "
 
       -- Viewer (pick ONE). Zathura with SyncTeX via nvr:
       vim.g.vimtex_view_method = "zathura"
