@@ -1,6 +1,6 @@
 -- init.lua
 vim.g.mapleader = ' '
-vim.g.maplocalleader = ','
+vim.g.maplocalleader = ' '
 
 -- LSP compat shim for plugins still calling vim.lsp.buf_get_clients()
 --@diagnostic disable-next-line: duplicate-set-field
@@ -11,3 +11,4 @@ end
 require("config.lazy")
 require("settings")
 require("key_mappings")
+require("custom.math").setup()
