@@ -31,8 +31,15 @@ vim.opt.smartindent = true
 --vim.cmd([[colorscheme gruvbox]])
 --
 -- Command just for json to change the tabstop
+
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "json",
+  command = "setlocal tabstop=2 shiftwidth=2 expandtab"
+})
+
+-- Lua needs two space indent
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "lua",
   command = "setlocal tabstop=2 shiftwidth=2 expandtab"
 })
 

@@ -33,6 +33,16 @@ return {
       -- Quality-of-life
       vim.g.vimtex_quickfix_mode = 1
       vim.g.vimtex_fold_enabled = 0
+
+	  -- Shortcuts
+	  vim.cmd([[
+		nmap <localleader>ll <cmd>VimtexCompile<CR>
+		nmap <localleader>lv <cmd>VimtexView<CR>
+		nmap <localleader>lk <cmd>VimtexStop<CR>
+		nmap <localleader>le <cmd>VimtexErrors<CR>
+		nmap <localleader>li <cmd>VimtexInfo<CR>
+		nmap <localleader>lc <cmd>VimtexClean<CR>
+	  ]])
     end,
     ft = { "tex" },
   },
