@@ -2,23 +2,80 @@
 return{
   'nvim-tree/nvim-web-devicons',
   {
-    'navarasu/onedark.nvim',
+    "catppuccin/nvim",
+    name = "catppuccin",
     priority = 1000,
     config = function()
-      vim.cmd.colorscheme 'onedark'
+      require("catppuccin").setup({
+        flavour = "mocha",   -- latte | frappe | macchiato | mocha
+        transparent_background = true,
+        integrations = {
+          lualine = true,
+          nvimtree = true,
+          telescope = true,
+        },
+      })
+      vim.cmd.colorscheme("catppuccin")
     end,
   },
   {
-    'nvim-lualine/lualine.nvim',
+    "nvim-lualine/lualine.nvim",
     opts = {
       options = {
         icons_enabled = false,
-        theme = 'onedark',
-        component_separators = '|',
-        section_separators = '',
+        theme = "catppuccin",
+        component_separators = "|",
+        section_separators = "",
       },
     },
   },
+  --{
+  --  'folke/tokyonight.nvim',
+  --  priority = 1000,
+  --  config = function()
+  --    require('tokyonight').setup({
+  --      style = 'night',       -- 'storm' | 'night' | 'moon' | 'day'
+  --      transparent = true,
+  --      styles = {
+  --        sidebars = 'transparent',
+  --        floats = 'transparent',
+  --      },
+  --    })
+  --    vim.cmd.colorscheme('tokyonight')
+  --  end,
+  --},
+  --{
+  --  'nvim-lualine/lualine.nvim',
+  --  opts = {
+  --    options = {
+  --      icons_enabled = false,
+  --      theme = 'tokyonight',
+  --      component_separators = '|',
+  --      section_separators = '',
+  --    },
+  --  },
+  --},
+  --{
+  --  'navarasu/onedark.nvim',
+  --  priority = 1000,
+  --  config = function()
+  --    require('onedark').setup {
+  --      transparent = true,
+  --    }
+  --    require('onedark').load()
+  --  end,
+  --},
+  --{
+  --  'nvim-lualine/lualine.nvim',
+  --  opts = {
+  --    options = {
+  --      icons_enabled = false,
+  --      theme = 'onedark',
+  --      component_separators = '|',
+  --      section_separators = '',
+  --    },
+  --  },
+  --},
   {
     "nvim-tree/nvim-tree.lua",
     dependencies = { "nvim-tree/nvim-web-devicons" },
