@@ -1,23 +1,77 @@
--- File: lua/lsp/on_attach.lua
+-- Purpose: Buffer-local keymaps and LSP niceties that run when a server attaches.
+-- Notes:
+--   • Keep ONLY LSP buffer-scoped behavior here (keymaps, highlights, inlay toggles).
+--   • This is referenced from plugins/lsp.lua via server.on_attach = on_attach.
 
 local M = {}
 
-M.on_attach = function(_, bufnr)
+-- Safe, optional use of Telescope pickers if present
+local ok_tb, tb = pcall(require, 'telescope.builtin')
 
-  local nmap = function(keys, func, desc)
-    if desc then
-      desc = 'LSP: ' .. desc
-    end
-    vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
+-- Helper: feature check that works on 0.10 and 0.11
+local function client_supports_method(client, method, bufnr)
+  if vim.fn.has('nvim-0.11') == 1 then
+    return client:supports_method(method, bufnr)
+  else
+    return client.supports_method(client, method, { bufnr = bufnr })
+  end
+end
+
+M.on_attach = function(client, bufnr)
+  -- Convenience mapper that tags descriptions as 'LSP: ...'
+  local function nmap(lhs, rhs, desc)
+    vim.keymap.set('n', lhs, rhs, { buffer = bufnr, desc = desc and ('LSP: ' .. desc) or nil })
   end
 
-  nmap('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
-  nmap('gr', vim.lsp.buf.references, '[G]oto [R]eferences')
-  nmap('gi', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
-  nmap('<leader>mv', vim.lsp.buf.rename, '[M]ove (Rename)')
-  nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
-  nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
-  nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Help')
+  ---------------------------------------------------------------------------
+  -- Core navigation / actions (Telescope variants if available)
+  ---------------------------------------------------------------------------
+  if ok_tb then
+    nmap('grd', tb.lsp_definitions,               '[G]oto [D]efinition (Telescope)')
+    nmap('grr', tb.lsp_references,                '[G]oto [R]eferences (Telescope)')
+    nmap('gri', tb.lsp_implementations,           '[G]oto [I]mplementation (Telescope)')
+    nmap('gO',  tb.lsp_document_symbols,          'Open Document Symbols')
+    nmap('gW',  tb.lsp_dynamic_workspace_symbols, 'Open Workspace Symbols')
+    nmap('grt', tb.lsp_type_definitions,          '[G]oto [T]ype Definition')
+  end
+
+  nmap('gd',  vim.lsp.buf.definition,           '[G]oto [D]efinition')
+  nmap('gr',  vim.lsp.buf.references,           '[G]oto [R]eferences')
+  nmap('gi',  vim.lsp.buf.implementation,       '[G]oto [I]mplementation')
+  nmap('grD', vim.lsp.buf.declaration,            '[G]oto [D]eclaration')
+  nmap('grn', vim.lsp.buf.rename,                 '[R]e[n]ame')
+  nmap('gra', vim.lsp.buf.code_action,            '[G]oto Code [A]ction')
+  nmap('K',   vim.lsp.buf.hover,                  'Hover Documentation')
+  nmap('<C-k>', vim.lsp.buf.signature_help,       'Signature Help')
+
+  ---------------------------------------------------------------------------
+  -- Optional: highlight symbol references on cursor hold, clear on move
+  ---------------------------------------------------------------------------
+  if client and client_supports_method(client, vim.lsp.protocol.Methods.textDocument_documentHighlight, bufnr) then
+    local grp = vim.api.nvim_create_augroup('lsp-highlight-' .. bufnr, { clear = true })
+    vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
+      group = grp, buffer = bufnr, callback = vim.lsp.buf.document_highlight,
+    })
+    vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI', 'BufLeave' }, {
+      group = grp, buffer = bufnr, callback = vim.lsp.buf.clear_references,
+    })
+  end
+
+  ---------------------------------------------------------------------------
+  -- Optional: toggle inlay hints if server supports them
+  ---------------------------------------------------------------------------
+  if client and client_supports_method(client, vim.lsp.protocol.Methods.textDocument_inlayHint, bufnr) then
+    nmap('<leader>th', function()
+      vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = bufnr }), { bufnr = bufnr })
+    end, '[T]oggle Inlay [H]ints')
+  end
+
+  -- You can add format-on-save here if desired; omitted for explicit control.
+  -- Example (uncomment to enable for servers that support formatting):
+  -- vim.api.nvim_create_autocmd('BufWritePre', {
+  --   buffer = bufnr,
+  --   callback = function() vim.lsp.buf.format({ bufnr = bufnr, timeout_ms = 2000 }) end,
+  -- })
 end
 
 return M

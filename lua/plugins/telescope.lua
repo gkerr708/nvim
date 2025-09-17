@@ -58,6 +58,16 @@ return {
         },
       }
 
+      -- Transparent background for main window
+      vim.api.nvim_set_hl(0, "TelescopeNormal", { bg = "NONE" })
+      vim.api.nvim_set_hl(0, "TelescopePromptBorder", { fg = "#89b4fa", bg = "NONE" })
+      vim.api.nvim_set_hl(0, "TelescopeResultsBorder", { fg = "#89b4fa", bg = "NONE" })
+      vim.api.nvim_set_hl(0, "TelescopePreviewBorder", { fg = "#89b4fa", bg = "NONE" })
+      vim.api.nvim_set_hl(0, "TelescopePromptNormal", { bg = "NONE" })
+      vim.api.nvim_set_hl(0, "TelescopePromptBorder", { fg = "#89b4fa", bg = "NONE" })
+      vim.api.nvim_set_hl(0, "TelescopeResultsNormal", { bg = "NONE" })
+
+
       -- Enable Telescope extensions if they are installed
       pcall(require('telescope').load_extension, 'fzf')
       pcall(require('telescope').load_extension, 'ui-select')
@@ -79,7 +89,7 @@ return {
       vim.keymap.set('n', '<leader>/', function()
         -- You can pass additional configuration to Telescope to change the theme, layout, etc.
         builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
-          winblend = 10,
+          winblend = 0,
           previewer = false,
         })
       end, { desc = '[/] Fuzzily search in current buffer' })
