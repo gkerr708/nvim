@@ -11,4 +11,5 @@ end
 require("config.lazy")
 require("settings")
 require("key_mappings")
+require("custom.float_bg")
 require("custom.math").setup()
