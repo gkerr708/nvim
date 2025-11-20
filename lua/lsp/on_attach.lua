@@ -26,18 +26,45 @@ M.on_attach = function(client, bufnr)
   ---------------------------------------------------------------------------
   -- Core navigation / actions (Telescope variants if available)
   ---------------------------------------------------------------------------
-  if ok_tb then
-    nmap('grd', tb.lsp_definitions,               '[G]oto [D]efinition (Telescope)')
-    nmap('grr', tb.lsp_references,                '[G]oto [R]eferences (Telescope)')
-    nmap('gri', tb.lsp_implementations,           '[G]oto [I]mplementation (Telescope)')
-    nmap('gO',  tb.lsp_document_symbols,          'Open Document Symbols')
-    nmap('gW',  tb.lsp_dynamic_workspace_symbols, 'Open Workspace Symbols')
-    nmap('grt', tb.lsp_type_definitions,          '[G]oto [T]ype Definition')
+  --if ok_tb then
+  --  nmap('grd', tb.lsp_definitions,               '[G]oto [D]efinition (Telescope)')
+  --  nmap('grr', tb.lsp_references,                '[G]oto [R]eferences (Telescope)')
+  --  nmap('gri', tb.lsp_implementations,           '[G]oto [I]mplementation (Telescope)')
+  --  nmap('gO',  tb.lsp_document_symbols,          'Open Document Symbols')
+  --  nmap('gW',  tb.lsp_dynamic_workspace_symbols, 'Open Workspace Symbols')
+  --  nmap('grt', tb.lsp_type_definitions,          '[G]oto [T]ype Definition')
+  --end
+  -- helper: fix 0.10 branch
+  local function client_supports_method(client, method, bufnr)
+    if vim.fn.has('nvim-0.11') == 1 then
+      return client:supports_method(method, bufnr)
+    else
+      return client.supports_method and client.supports_method(method)
+    end
   end
+
+  -- jump to first implementation (fallbacks optional)
+  local function goto_impl()
+    local params = vim.lsp.util.make_position_params()
+    vim.lsp.buf_request(0, 'textDocument/implementation', params, function(err, res)
+      if err then vim.notify(err.message, vim.log.levels.ERROR); return end
+      if not res or vim.tbl_isempty(res) then
+        vim.notify('No implementation found', vim.log.levels.WARN); return
+      end
+      local loc = vim.tbl_islist(res) and res[1] or res
+      vim.lsp.util.jump_to_location(loc, 'utf-16')
+    end)
+  end
+  
+  -- in M.on_attach(client, bufnr):
+  vim.keymap.set('n', 'gI', goto_impl, { buffer = bufnr, desc = 'LSP: Goto Implementation', silent = true, nowait = true })
+  -- (optional) also map 'gi' if you really want it:
+  -- vim.keymap.set('n', 'gi', goto_impl, { buffer = bufnr, desc = 'LSP: Goto Implementation', silent = true, nowait = true })
+
 
   nmap('gd',  vim.lsp.buf.definition,           '[G]oto [D]efinition')
   nmap('gr',  vim.lsp.buf.references,           '[G]oto [R]eferences')
-  nmap('gi',  vim.lsp.buf.implementation,       '[G]oto [I]mplementation')
+  --nmap('gi',  vim.lsp.buf.implementation,       '[G]oto [I]mplementation')
   nmap('grD', vim.lsp.buf.declaration,            '[G]oto [D]eclaration')
   nmap('grn', vim.lsp.buf.rename,                 '[R]e[n]ame')
   nmap('gra', vim.lsp.buf.code_action,            '[G]oto Code [A]ction')

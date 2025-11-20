@@ -11,5 +11,5 @@ end
 require("config.lazy")
 require("settings")
 require("key_mappings")
-require("custom.float_bg")
-require("custom.math").setup()
+--require("custom.float_bg") -- setup transparent floating backgrounds
+-- require("custom.math").setup()

@@ -14,10 +14,20 @@ vim.keymap.set('n', '<Leader>rp', function()
 end, { silent = false })
 
 vim.keymap.set('n', '<Leader>rm', function()
-  --local filename = paths.get_current_file_path()
+  local file = vim.fn.expand("%:p")          -- full path of current file
+  local ext = vim.fn.expand("%:e")           -- file extension
   local project_root = vim.fn.getcwd()
   local module_name = paths.get_module_name()
 
+  -- If file is an R script, run with Rscript
+  if ext == "r" or ext == "R" then
+    local cmd = "cd " .. project_root .. " && Rscript " .. file
+    vim.cmd("belowright split | terminal echo 'Rscript " .. file .. "' && echo '' && " .. cmd)
+    vim.cmd("stopinsert")
+    return
+  end
+
+  -- Otherwise assume it's a Python module (your original logic)
   local python_cmd
   if vim.fn.filereadable(project_root .. "/uv.lock") == 1 then
     python_cmd = "uv run"
@@ -122,7 +132,6 @@ vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 vim.keymap.set('n', '<Leader><Tab>', '<C-w>w')
-vim.keymap.set('n', '<Leader>j', ':NvimTreeToggle<CR>') -- opens nerdtree file explorer
 vim.keymap.set('n', '<Leader>wc', ':w !wc -w<CR>') -- gets word count
 
 -- quit window
@@ -136,14 +145,6 @@ vim.keymap.set('n', '<Leader>mt', ':MarkdownPreviewToggle<CR>') -- % means curre
 -- Show diagnostics
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = "Show diagnostics" })
 
--- Git commands
-vim.keymap.set('n', '<Leader>ga', ':! git add .<CR>') -- opens nerdtree file explorer
-vim.keymap.set('n', '<Leader>gc', ':! git commit -m "Default Message"<CR>') -- opens nerdtree file explorer
-vim.keymap.set('n', '<Leader>gp', ':! git push<CR>') -- opens nerdtree file explorer
-vim.keymap.set('n', '<Leader>gP', ':! git pull<CR>') -- opens nerdtree file explorer
-vim.keymap.set('n', '<Leader>gf', ':! git fetch<CR>') -- opens nerdtree file explorer
-vim.keymap.set('n', '<Leader>gm', ':! git merge<CR>') -- opens nerdtree file explorer
-
 -- Open a Terminal
 vim.api.nvim_set_keymap('n', '<Leader>th', ':split | terminal<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<Leader>tv', ':vsplit | terminal<CR>', { noremap = true, silent = true })
@@ -156,6 +157,7 @@ vim.api.nvim_set_keymap('n', '<Leader>tc', ':q<CR>', { noremap = true, silent = 
 -- Switch between Terminal and Normal Mode
 vim.api.nvim_set_keymap('t', '<Leader>tn', '<C-\\><C-n>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<Leader>ti', 'i', { noremap = true, silent = true })
+
 ---- Autocommand to enter insert mode on terminal open
 vim.cmd([[
   augroup Terminal

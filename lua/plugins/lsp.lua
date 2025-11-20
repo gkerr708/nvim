@@ -4,15 +4,10 @@ return {
     'neovim/nvim-lspconfig',
 
     dependencies = {
-      -- Tool manager (servers/formatters/debuggers live under stdpath)
       { 'mason-org/mason.nvim', opts = {} },
       'mason-org/mason-lspconfig.nvim',
       'WhoIsSethDaniel/mason-tool-installer.nvim',
-
-      -- Status UI for LSP progress (non-blocking)
       { 'j-hui/fidget.nvim', opts = {} },
-
-      -- Completion plugin; we only need its advertised LSP capabilities
       'saghen/blink.cmp',
     },
 
@@ -31,73 +26,99 @@ return {
             [vim.diagnostic.severity.HINT ] = '󰌶 ',
           },
         } or {},
-        virtual_text = {
-          source = 'if_many',
-          spacing = 2,
-          format = function(d) return d.message end,
-        },
+        virtual_text = { source = 'if_many', spacing = 2, format = function(d) return d.message end },
         float = { border = 'rounded', source = 'if_many' },
       })
-
-      -- Optional: rounded borders for hover/signature as well
-      local with_border = function(handler)
-        return vim.lsp.with(handler, { border = 'rounded' })
-      end
-      vim.lsp.handlers['textDocument/hover']          = with_border(vim.lsp.handlers.hover)
-      vim.lsp.handlers['textDocument/signatureHelp']  = with_border(vim.lsp.handlers.signature_help)
+      local with_border = function(h) return vim.lsp.with(h, { border = 'rounded' }) end
+      vim.lsp.handlers['textDocument/hover']         = with_border(vim.lsp.handlers.hover)
+      vim.lsp.handlers['textDocument/signatureHelp'] = with_border(vim.lsp.handlers.signature_help)
 
       ---------------------------------------------------------------------------
-      -- 2) Capabilities: extend client abilities via blink.cmp
+      -- 2) Capabilities (via blink.cmp) + unify position encodings
       ---------------------------------------------------------------------------
       local capabilities = require('blink.cmp').get_lsp_capabilities()
+      capabilities.general = capabilities.general or {}
+      capabilities.general.positionEncodings = { 'utf-16' }
+      capabilities.offsetEncoding = { 'utf-16' }
 
       ---------------------------------------------------------------------------
-      -- 3) Servers to enable (add/remove freely)
-      --    Keys you may override per server: cmd, filetypes, settings, capabilities, on_attach
+      -- 3) Inline on_attach (buffer-local LSP behavior only)
+      ---------------------------------------------------------------------------
+      local function already(bufnr)
+        local ok, val = pcall(vim.api.nvim_buf_get_var, bufnr, 'user_lsp_on_attach_done')
+        return ok and val
+      end
+      local function mark(bufnr)
+        pcall(vim.api.nvim_buf_set_var, bufnr, 'user_lsp_on_attach_done', true)
+      end
+
+      local function on_attach(client, bufnr)
+        if already(bufnr) then return end
+        mark(bufnr)
+
+        local function nmap(lhs, rhs, desc)
+          vim.keymap.set('n', lhs, rhs, { buffer = bufnr, silent = true, nowait = true, desc = desc and ('LSP: ' .. desc) or nil })
+        end
+
+        -- Jumps (prefer gI; `gi` is Vim's "go to last insert")
+        nmap('gd',  vim.lsp.buf.definition,        '[G]oto [D]efinition')
+        nmap('gr',  vim.lsp.buf.references,        '[G]oto [R]eferences')
+        nmap('gI',  vim.lsp.buf.implementation,    '[G]oto [I]mplementation')
+        nmap('K',   vim.lsp.buf.hover,             'Hover')
+        nmap('<C-k>', vim.lsp.buf.signature_help,  'Signature Help')
+
+        -- Symbol highlights (if supported)
+        if client and client.supports_method('textDocument/documentHighlight') then
+          local grp = vim.api.nvim_create_augroup('lsp-highlight-' .. bufnr, { clear = true })
+          vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, { group = grp, buffer = bufnr, callback = vim.lsp.buf.document_highlight })
+          vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI', 'BufLeave' }, { group = grp, buffer = bufnr, callback = vim.lsp.buf.clear_references })
+        end
+
+        -- Inlay hints toggle (NVIM ≥0.10)
+        if vim.lsp.inlay_hint and client and client.supports_method('textDocument/inlayHint') then
+          nmap('<leader>th', function()
+            local en = vim.lsp.inlay_hint.is_enabled and vim.lsp.inlay_hint.is_enabled({ bufnr = bufnr })
+            vim.lsp.inlay_hint.enable(not en, { bufnr = bufnr })
+          end, '[T]oggle Inlay [H]ints')
+        end
+      end
+
+      -- Safety-net: ensure on_attach runs for ANY client that attaches
+      vim.api.nvim_create_autocmd('LspAttach', {
+        group = vim.api.nvim_create_augroup('user-lsp-on_attach', { clear = true }),
+        callback = function(args)
+          local client = vim.lsp.get_client_by_id(args.data.client_id)
+          on_attach(client, args.buf)
+        end,
+      })
+
+      ---------------------------------------------------------------------------
+      -- 4) Servers to enable
       ---------------------------------------------------------------------------
       local servers = {
-        -- Python
         pyright = {},
         ruff = {},
-
-        -- Rust
         rust_analyzer = {},
-
-        -- Lua
-        lua_ls = {
-          settings = {
-            Lua = {
-              completion = { callSnippet = 'Replace' },
-              -- diagnostics = { disable = { 'missing-fields' } }, -- example toggle
-            },
-          },
-        },
+        lua_ls = { settings = { Lua = { completion = { callSnippet = 'Replace' } } } },
       }
 
       ---------------------------------------------------------------------------
-      -- 4) Ensure required tools are installed via Mason Tool Installer
+      -- 5) Ensure tools via Mason Tool Installer
       ---------------------------------------------------------------------------
       local ensure = vim.tbl_keys(servers)
-      vim.list_extend(ensure, {
-        'stylua',  -- Lua formatter
-        'ruff',    -- Python linter/formatter
-      })
+      vim.list_extend(ensure, { 'stylua', 'ruff' })
       require('mason-tool-installer').setup({ ensure_installed = ensure })
 
       ---------------------------------------------------------------------------
-      -- 5) Wire servers via mason-lspconfig; inject capabilities + on_attach
+      -- 6) Setup servers (mason-lspconfig handler)
       ---------------------------------------------------------------------------
-      local on_attach = require('lsp.on_attach').on_attach
-
       require('mason-lspconfig').setup({
-        ensure_installed = {},            -- We rely on mason-tool-installer above
+        ensure_installed = {},
         automatic_installation = false,
         handlers = {
           function(server_name)
             local server = servers[server_name] or {}
-            -- Merge capabilities (server-specific can override defaults if provided)
             server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-            -- Single source of truth for keymaps, per-buffer
             server.on_attach = on_attach
             require('lspconfig')[server_name].setup(server)
           end,
