@@ -1,6 +1,6 @@
 local paths = require("util.paths")
 
-vim = vim or {}
+vim = vim or {} -- idk why this is bad but I hope I'm not being a dumbass
 
 -- Python
 vim.keymap.set('n', '<Leader>rp', function()
@@ -14,53 +14,100 @@ vim.keymap.set('n', '<Leader>rp', function()
 end, { silent = false })
 
 vim.keymap.set('n', '<Leader>rm', function()
-  local file = vim.fn.expand("%:p")          -- full path of current file
-  local ext = vim.fn.expand("%:e")           -- file extension
+  local file = vim.fn.expand("%:p")          -- full path
+  local ext  = vim.fn.expand("%:e")          -- extension
   local project_root = vim.fn.getcwd()
   local module_name = paths.get_module_name()
 
-  -- If file is an R script, run with Rscript
-  if ext == "r" or ext == "R" then
-    local cmd = "cd " .. project_root .. " && Rscript " .. file
-    vim.cmd("belowright split | terminal echo 'Rscript " .. file .. "' && echo '' && " .. cmd)
+  if ext == "rs" then
+    -- Check for Cargo project
+    if vim.fn.filereadable(project_root .. "/Cargo.toml") == 1 then
+      local rel = vim.fn.expand("%:r")            -- relative path without extension
+      local name = vim.fn.expand("%:t:r")         -- file name without extension
+  
+      local cargo_cmd
+  
+      if rel:match("src/main$") then
+        -- main.rs → default binary
+        cargo_cmd = "cargo run"
+      elseif rel:match("src/bin/") then
+        -- src/bin/foo.rs → cargo run --bin foo
+        cargo_cmd = "cargo run --bin " .. name
+      else
+        -- unknown context: no runnable binary
+        vim.notify("No runnable Rust binary in this location", vim.log.levels.WARN)
+        return
+      end
+  
+      local cmd = "cd " .. project_root .. " && " .. cargo_cmd
+      vim.cmd("belowright split | terminal echo '" .. cargo_cmd .. "' && echo '' && " .. cmd)
+      vim.cmd("stopinsert")
+      return
+    end
+  end
+
+  -- Python
+  if ext == "py" then
+    module_name = module_name:gsub("%.py$", "")
+
+    local python_cmd
+    if vim.fn.filereadable(project_root .. "/uv.lock") == 1 then
+      python_cmd = "uv run"
+    elseif vim.fn.filereadable(project_root .. "/poetry.lock") == 1 then
+      python_cmd = "poetry run python3"
+    else
+      python_cmd = "python3"
+    end  
+
+    local cmd = "cd " .. project_root .. " && PYTHONPATH=. " .. python_cmd .. " -m " .. module_name
+
+    vim.cmd("belowright split | terminal echo '" .. python_cmd .. " -m " .. module_name .. "' && echo '' && " .. cmd)
+    vim.cmd("stopinsert")
+  end
+end, { silent = false })
+
+-- Run tests
+vim.keymap.set('n', '<Leader>rt', function()
+  local ext = vim.fn.expand("%:e")
+  local project_root = vim.fn.getcwd()
+
+  ---------------------------------------------------------
+  -- RUST: cargo test
+  ---------------------------------------------------------
+  if ext == "rs" then
+    if vim.fn.filereadable(project_root .. "/Cargo.toml") == 1 then
+      local cmd = "cd " .. project_root .. " && cargo test -- --nocapture"
+      vim.cmd("belowright split | terminal echo 'cargo test' && echo '' && " .. cmd)
+      vim.cmd("stopinsert")
+      return
+    end
+  end
+
+  ---------------------------------------------------------
+  -- PYTHON: pytest (uv/poetry/system python)
+  ---------------------------------------------------------
+  if ext == "py" then
+    local python_cmd
+    if vim.fn.filereadable(project_root .. "/uv.lock") == 1 then
+      python_cmd = "uv run"
+    elseif vim.fn.filereadable(project_root .. "/poetry.lock") == 1 then
+      python_cmd = "poetry run"
+    else
+      python_cmd = "python3 -m"
+    end
+
+    -- pytest command
+    local cmd = "cd " .. project_root .. " && " .. python_cmd .. " pytest -v -s"
+
+    vim.cmd("belowright split | terminal echo '" .. python_cmd .. " pytest -v -s' && echo '' && " .. cmd)
     vim.cmd("stopinsert")
     return
   end
 
-  -- Otherwise assume it's a Python module (your original logic)
-  local python_cmd
-  if vim.fn.filereadable(project_root .. "/uv.lock") == 1 then
-    python_cmd = "uv run"
-  elseif vim.fn.filereadable(project_root .. "/poetry.lock") == 1 then
-    python_cmd = "poetry run python3"
-  else
-    python_cmd = "python3"
-  end
-
-  local cmd = "cd " .. project_root .. " && PYTHONPATH=. " .. python_cmd .. " -m " .. module_name
-  vim.cmd("belowright split | terminal echo '" .. python_cmd .. " -m " .. module_name .. "' && echo '' && " .. cmd)
-  vim.cmd("stopinsert")
-end, { silent = false })
-
-vim.keymap.set('n', '<Leader>rt', function()
-  local cmd = "poetry run pytest -v -s"
-  vim.cmd("belowright split | terminal echo '" .. cmd .. "' && echo '' && " .. cmd)
-  vim.cmd("stopinsert")
-end, { silent = false })
-
--- Rust 
-vim.keymap.set('n', '<Leader>ru', function()
-  local cmd = "cargo run"
-  vim.cmd("belowright split | terminal echo '" .. cmd .. "' && echo '' && " .. cmd)
-  vim.cmd("stopinsert")
-end, { silent = false })
-
-vim.keymap.set('n', '<Leader>ri', function()
-  local cmd = "cargo run --bin"
-  local file_name = vim.fn.expand("%:t:r")
-  cmd = cmd .. " " .. file_name
-  vim.cmd("belowright split | terminal echo '" .. cmd .. "' && echo '' && " .. cmd)
-  vim.cmd("stopinsert")
+  ---------------------------------------------------------
+  -- If neither type
+  ---------------------------------------------------------
+  vim.notify("No test runner defined for this file type.", vim.log.levels.WARN)
 end, { silent = false })
 
 -- C/C++

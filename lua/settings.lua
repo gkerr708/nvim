@@ -28,10 +28,11 @@ vim.o.incsearch = true
 vim.o.background = "dark" -- or "light" for light mode
 vim.opt.autoindent = true
 vim.opt.smartindent = true
---vim.cmd([[colorscheme gruvbox]])
---
--- Command just for json to change the tabstop
 
+-- Command to make the current WORD uppercase
+vim.keymap.set("n", "gp", "gUiw", { noremap = true, silent = true, desc = "Make WORD uppercase" })
+
+-- JSON needs two space indent
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "json",
   command = "setlocal tabstop=2 shiftwidth=2 expandtab"
