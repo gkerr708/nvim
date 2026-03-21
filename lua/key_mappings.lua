@@ -14,7 +14,7 @@ vim.keymap.set('n', '<Leader>rp', function()
 end, { silent = false })
 
 vim.keymap.set('n', '<Leader>rm', function()
-  local file = vim.fn.expand("%:p")          -- full path
+  --local file = vim.fn.expand("%:p")          -- full path
   local ext  = vim.fn.expand("%:e")          -- extension
   local project_root = vim.fn.getcwd()
   local module_name = paths.get_module_name()
@@ -24,9 +24,7 @@ vim.keymap.set('n', '<Leader>rm', function()
     if vim.fn.filereadable(project_root .. "/Cargo.toml") == 1 then
       local rel = vim.fn.expand("%:r")            -- relative path without extension
       local name = vim.fn.expand("%:t:r")         -- file name without extension
-  
       local cargo_cmd
-  
       if rel:match("src/main$") then
         -- main.rs → default binary
         cargo_cmd = "cargo run"
@@ -38,7 +36,6 @@ vim.keymap.set('n', '<Leader>rm', function()
         vim.notify("No runnable Rust binary in this location", vim.log.levels.WARN)
         return
       end
-  
       local cmd = "cd " .. project_root .. " && " .. cargo_cmd
       vim.cmd("belowright split | terminal echo '" .. cargo_cmd .. "' && echo '' && " .. cmd)
       vim.cmd("stopinsert")
@@ -65,6 +62,20 @@ vim.keymap.set('n', '<Leader>rm', function()
     vim.cmd("stopinsert")
   end
 end, { silent = false })
+
+-- Alt way to run latex files
+--vim.keymap.set('n', '<Leader>rl', function()
+--  local file = vim.fn.expand("%:p")
+--  local cmd = "latexmk -pdf -shell-escape -file-line-error -synctex=1 -interaction=nonstopmode " ..
+--              vim.fn.shellescape(file)
+--
+--  if vim.bo.filetype ~= "tex" then
+--    vim.notify("Not a LaTeX file", vim.log.levels.WARN)
+--    return
+--  end
+--  vim.cmd("belowright split | terminal " .. cmd)
+--  vim.cmd("stopinsert")
+--end, { silent = false })
 
 -- Run tests
 vim.keymap.set('n', '<Leader>rt', function()
