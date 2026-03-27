@@ -1,3 +1,4 @@
+-- avante.lua
 return {
   "yetone/avante.nvim",
   event = "VeryLazy",
@@ -32,11 +33,6 @@ return {
           drag_and_drop = { insert_mode = true },
         },
       },
-    },
-    {
-      "MeanderingProgrammer/render-markdown.nvim", -- optional, nicer markdown
-      opts = { file_types = { "markdown", "Avante" } },
-      ft = { "markdown", "Avante" },
     },
   },
 }
