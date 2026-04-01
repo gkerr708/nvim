@@ -49,6 +49,11 @@ return {
   		  dotfiles = false,    -- show dotfiles
   		  git_ignored = false, -- show git-ignored files
   		},
+        actions = {
+          open_file = {
+            window_picker = {},
+          },
+        },
       })
     end,
   },
