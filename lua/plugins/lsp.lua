@@ -29,9 +29,7 @@ return {
         virtual_text = { source = 'if_many', spacing = 2, format = function(d) return d.message end },
         float = { border = 'rounded', source = 'if_many' },
       })
-      local with_border = function(h) return vim.lsp.with(h, { border = 'rounded' }) end
-      vim.lsp.handlers['textDocument/hover']         = with_border(vim.lsp.handlers.hover)
-      vim.lsp.handlers['textDocument/signatureHelp'] = with_border(vim.lsp.handlers.signature_help)
+      vim.o.winborder = 'rounded'
 
       ---------------------------------------------------------------------------
       -- 2) Capabilities (via blink.cmp) + unify position encodings
@@ -68,14 +66,14 @@ return {
         nmap('<C-k>', vim.lsp.buf.signature_help,  'Signature Help')
 
         -- Symbol highlights (if supported)
-        if client and client.supports_method('textDocument/documentHighlight') then
+        if client and client:supports_method('textDocument/documentHighlight') then
           local grp = vim.api.nvim_create_augroup('lsp-highlight-' .. bufnr, { clear = true })
           vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, { group = grp, buffer = bufnr, callback = vim.lsp.buf.document_highlight })
           vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI', 'BufLeave' }, { group = grp, buffer = bufnr, callback = vim.lsp.buf.clear_references })
         end
 
         -- Inlay hints toggle (NVIM ≥0.10)
-        if vim.lsp.inlay_hint and client and client.supports_method('textDocument/inlayHint') then
+        if vim.lsp.inlay_hint and client and client:supports_method('textDocument/inlayHint') then
           nmap('<leader>th', function()
             local en = vim.lsp.inlay_hint.is_enabled and vim.lsp.inlay_hint.is_enabled({ bufnr = bufnr })
             vim.lsp.inlay_hint.enable(not en, { bufnr = bufnr })
